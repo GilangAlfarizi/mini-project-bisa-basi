@@ -1,7 +1,6 @@
 import { GetCategoriesUseCase } from '@application/usecases/category';
-import { envsConfig } from '@infrastructure/envs';
-import { Controller, Get } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { GetCategoryResponseDto } from '../dto';
 
@@ -10,6 +9,10 @@ import { GetCategoryResponseDto } from '../dto';
 export class CategoryController {
   constructor(private readonly getCategoriesUseCase: GetCategoriesUseCase) {}
 
+  @ApiOkResponse({
+    type: [GetCategoryResponseDto],
+  })
+  @HttpCode(HttpStatus.OK)
   @Get()
   async getListCategories(): Promise<GetCategoryResponseDto[]> {
     return await this.getCategoriesUseCase.execute();

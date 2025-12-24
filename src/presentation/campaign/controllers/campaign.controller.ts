@@ -1,7 +1,6 @@
 import { GetCampaignsUseCase } from '@application/usecases/campaign';
-import { envsConfig } from '@infrastructure/envs';
-import { Controller, Get } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { GetCampaignResponseDto } from '../dto';
 
@@ -10,6 +9,10 @@ import { GetCampaignResponseDto } from '../dto';
 export class CampaignController {
   constructor(private readonly getCampaignsUseCase: GetCampaignsUseCase) {}
 
+  @ApiOkResponse({
+    type: [GetCampaignResponseDto],
+  })
+  @HttpCode(HttpStatus.OK)
   @Get()
   async getListCampaigns(): Promise<GetCampaignResponseDto[]> {
     return await this.getCampaignsUseCase.execute();

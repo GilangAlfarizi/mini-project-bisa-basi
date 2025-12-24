@@ -1,5 +1,6 @@
 import { DB, schema } from '@database';
 import { envsConfig } from '@infrastructure/envs';
+import { ResponseInterceptor } from '@infrastructure/interceptors';
 import { validationUtils } from '@infrastructure/utils';
 import { DrizzlePGModule } from '@knaadh/nestjs-drizzle-pg';
 import {
@@ -10,7 +11,8 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_PIPE } from '@nestjs/core';
+import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { JwtModule } from '@nestjs/jwt';
 
 @Global()
 @Module({
@@ -33,9 +35,18 @@ import { APP_PIPE } from '@nestjs/core';
         };
       },
     }),
+    JwtModule.register({
+      global: true,
+      secret: envsConfig().jwtSecret,
+      signOptions: { expiresIn: envsConfig().jwtExpiresIn },
+    }),
   ],
 
   providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
+    },
     {
       provide: APP_PIPE,
       useFactory() {

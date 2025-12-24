@@ -3,8 +3,12 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { PgTable, PgUpdateSetSource } from 'drizzle-orm/pg-core';
 
 import { schema } from '../src/database';
-import { campaigns, categories } from '../src/database/schema';
-import { campaignsDataConstant, categoriesDataConstant } from './constant.ts';
+import { campaigns, categories, users } from '../src/database/schema';
+import {
+  campaignsDataConstant,
+  categoriesDataConstant,
+  usersDataConstant,
+} from './constant.ts';
 
 const db = drizzle({ connection: process.env.DATABASE_URL || '', schema });
 
@@ -28,6 +32,7 @@ const main = async () => {
         .onConflictDoNothing();
 
       await Promise.all([
+        tx.insert(users).values(usersDataConstant).onConflictDoNothing(),
         tx
           .insert(campaigns)
           .values(campaignsDataConstant)

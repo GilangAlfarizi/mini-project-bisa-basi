@@ -16,4 +16,4 @@ const repositories: Provider[] = [
   controllers: [...Object.values(controllers)],
   providers: [...Object.values(usecases), ...Object.values(repositories)],
 })
-export class CampaignModules {}
+export class CampaignModule {}

@@ -28,7 +28,9 @@ describe('[use case] get categories', () => {
         .fn()
         .mockResolvedValue([mockCategoriesData]);
 
-      expect(await usecase.execute()).toStrictEqual([mockCategoriesData]);
+      expect(await usecase.execute()).toStrictEqual<GetCategoriesResponse[]>([
+        mockCategoriesData,
+      ]);
     });
   });
 });

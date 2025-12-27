@@ -1,8 +1,6 @@
-import { IHashService } from '@application/services';
-import { ITokenService } from '@application/services/token.service';
+import { IHashService, ITokenService } from '@application/services';
 import { DB, Database } from '@database';
 import {
-  GenerateTokenRequest,
   RegisterRequest,
   RegisterResponse,
   UserTokenPayload,

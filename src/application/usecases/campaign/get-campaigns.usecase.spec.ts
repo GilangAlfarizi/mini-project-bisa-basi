@@ -31,7 +31,9 @@ describe('[use case] get campaigns', () => {
         .fn()
         .mockResolvedValue([mockCampaignsData]);
 
-      expect(await usecase.execute()).toStrictEqual([mockCampaignsData]);
+      expect(await usecase.execute()).toStrictEqual<GetCampaignsResponse[]>([
+        mockCampaignsData,
+      ]);
     });
   });
 });

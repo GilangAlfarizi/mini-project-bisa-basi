@@ -1,5 +1,4 @@
 import { GetCampaignsResponse, ICampaignRepository } from '@domain/campaign';
-import { GetCategoriesResponse, ICategoryRepository } from '@domain/category';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

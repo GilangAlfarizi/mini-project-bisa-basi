@@ -1,67 +1,66 @@
 import { IHashService } from '@application/services';
 import { ITokenService } from '@application/services/token.service';
-import { Database } from '@database';
-import { RegisterRequest, RegisterResponse } from '@domain/auth';
+import { LoginRequest, RegisterResponse } from '@domain/auth';
 import { IUserRepository, User } from '@domain/user';
 import { faker } from '@faker-js/faker';
 import { mock } from 'jest-mock-extended';
 
-import { RegisterUseCase } from './register.usecase';
+import { LoginUseCase } from './login.usecase';
 
-describe('[use case] register user', () => {
-  let usecase: RegisterUseCase;
-  const mockDatabase: Database = mock<Database>();
+describe('[use case] login user', () => {
+  let usecase: LoginUseCase;
+
   const mockUserRepository: IUserRepository = mock<IUserRepository>();
   const mockHashService: IHashService = mock<IHashService>();
   const mockTokenService: ITokenService = mock<ITokenService>();
 
   beforeAll(() => {
-    usecase = new RegisterUseCase(
-      mockDatabase,
+    usecase = new LoginUseCase(
       mockUserRepository,
       mockHashService,
       mockTokenService,
     );
   });
 
-  beforeEach(() => {
-    mockDatabase.transaction = jest
-      .fn()
-      .mockImplementation((cb) => cb(mockDatabase));
-  });
-
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  const mockRequestData: RegisterRequest = {
-    name: faker.book.title(),
-    password: faker.internet.password(),
+  const mockRequestData: LoginRequest = {
     email: faker.internet.email(),
+    password: faker.internet.password(),
   };
 
   const mockUserData: Pick<User, 'id' | 'name' | 'password' | 'email'> = {
     id: faker.string.uuid(),
-    name: mockRequestData.name,
+    name: faker.person.fullName(),
     password: faker.internet.password(),
     email: mockRequestData.email,
   };
 
   describe('execute()', () => {
-    test('throw error EMAIL_IS_ALREADY_IN_USE if email is taken', async () => {
-      mockUserRepository.findOne = jest.fn().mockResolvedValue(mockUserData);
+    test('throw error USER_NOT_FOUND if email is not registered', async () => {
+      mockUserRepository.findOne = jest.fn().mockResolvedValue(null);
 
       expect(usecase.execute(mockRequestData)).rejects.toThrow(
-        'REGISTER_USECASE.EMAIL_IS_ALREADY_IN_USE',
+        'LOGIN_USECASE.USER_NOT_FOUND',
       );
     });
 
-    test('should successfully register a user', async () => {
-      const hashedPassword = mockUserData.password;
+    test('throw error INVALID_CREDENTIALS if password is wrong', async () => {
+      mockUserRepository.findOne = jest.fn().mockResolvedValue(mockUserData);
+      mockHashService.compare = jest.fn().mockReturnValue(false);
+
+      expect(usecase.execute(mockRequestData)).rejects.toThrow(
+        'LOGIN_USECASE.INVALID_CREDENTIALS',
+      );
+    });
+
+    test('should successfully login', async () => {
       const accessToken = faker.internet.jwt();
 
-      mockUserRepository.findOne = jest.fn().mockResolvedValue(null);
-      mockHashService.hash = jest.fn().mockReturnValue(hashedPassword);
+      mockUserRepository.findOne = jest.fn().mockResolvedValue(mockUserData);
+      mockHashService.compare = jest.fn().mockReturnValue(true);
       mockUserRepository.create = jest
         .fn()
         .mockResolvedValueOnce({ ...mockUserData });
@@ -69,12 +68,6 @@ describe('[use case] register user', () => {
 
       const result = await usecase.execute(mockRequestData);
 
-      expect(mockUserRepository.create).toHaveBeenCalledWith(
-        {
-          data: { ...mockRequestData, password: hashedPassword },
-        },
-        mockDatabase,
-      );
       expect(result).toStrictEqual<RegisterResponse>({
         user: {
           id: mockUserData.id,

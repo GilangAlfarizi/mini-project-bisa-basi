@@ -14,6 +14,7 @@ import {
   transformDrizzleWhereQuery,
 } from '@infrastructure/utils';
 import { Inject, Injectable } from '@nestjs/common';
+import { v7 as uuid } from 'uuid';
 
 @Injectable()
 export class CategoryRepository implements ICategoryRepository {
@@ -47,8 +48,19 @@ export class CategoryRepository implements ICategoryRepository {
     return result as SelectedFields<Category, Req['select']>[];
   }
 
-  create(req: CreateRequest<Category>, tx?: DBTransaction): Promise<Category> {
-    throw new Error('Method not implemented.');
+  async create(
+    req: CreateRequest<Category>,
+    tx?: DBTransaction,
+  ): Promise<Category> {
+    const results = await (tx ?? this.db)
+      .insert(categories)
+      .values({
+        id: req.data.id ?? uuid(),
+        ...req.data,
+      })
+      .returning();
+
+    return results[0] as unknown as Category;
   }
   update(req: UpdateRequest<Category>, tx?: DBTransaction): Promise<void> {
     throw new Error('Method not implemented.');

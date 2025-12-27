@@ -1,13 +1,32 @@
-import { GetCategoriesUseCase } from '@application/usecases/category';
-import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  CreateCategoryUseCase,
+  GetCategoriesUseCase,
+} from '@application/usecases/category';
+import { AuthGuard } from '@infrastructure/guards';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
-import { GetCategoryResponseDto } from '../dto';
+import {
+  CreateCategoryRequestDto,
+  CreateCategoryResponseDto,
+  GetCategoryResponseDto,
+} from '../dto';
 
 @ApiTags('Category')
 @Controller({ version: '1' })
 export class CategoryController {
-  constructor(private readonly getCategoriesUseCase: GetCategoriesUseCase) {}
+  constructor(
+    private readonly getCategoriesUseCase: GetCategoriesUseCase,
+    private readonly createCategoryUseCase: CreateCategoryUseCase,
+  ) {}
 
   @ApiOkResponse({
     type: [GetCategoryResponseDto],
@@ -16,5 +35,18 @@ export class CategoryController {
   @Get()
   async getListCategories(): Promise<GetCategoryResponseDto[]> {
     return await this.getCategoriesUseCase.execute();
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiCreatedResponse({
+    description: 'Success',
+    type: CreateCategoryResponseDto,
+  })
+  @HttpCode(HttpStatus.CREATED)
+  @Post()
+  async createCategory(
+    @Body() body: CreateCategoryRequestDto,
+  ): Promise<CreateCategoryResponseDto> {
+    return await this.createCategoryUseCase.execute(body);
   }
 }

@@ -14,6 +14,7 @@ import {
   transformDrizzleWhereQuery,
 } from '@infrastructure/utils';
 import { Inject, Injectable } from '@nestjs/common';
+import { v7 as uuid } from 'uuid';
 
 @Injectable()
 export class CampaignRepository implements ICampaignRepository {
@@ -47,8 +48,19 @@ export class CampaignRepository implements ICampaignRepository {
     return result as SelectedFields<Campaign, Req['select']>[];
   }
 
-  create(req: CreateRequest<Campaign>, tx?: DBTransaction): Promise<Campaign> {
-    throw new Error('Method not implemented.');
+  async create(
+    req: CreateRequest<Campaign>,
+    tx?: DBTransaction,
+  ): Promise<Campaign> {
+    const results = await (tx ?? this.db)
+      .insert(campaigns)
+      .values({
+        id: req.data.id ?? uuid(),
+        ...req.data,
+      })
+      .returning();
+
+    return results[0] as unknown as Campaign;
   }
   update(req: UpdateRequest<Campaign>, tx?: DBTransaction): Promise<void> {
     throw new Error('Method not implemented.');

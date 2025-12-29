@@ -1,6 +1,6 @@
 import * as usecases from '@application/usecases/category';
 import { ICategoryRepository } from '@domain/category';
-import { CategoryRepository } from '@infrastructure/repositories/category/category.repository';
+import { CategoryRepository } from '@infrastructure/repositories/category';
 import { Module, Provider } from '@nestjs/common';
 
 import * as controllers from './controllers';

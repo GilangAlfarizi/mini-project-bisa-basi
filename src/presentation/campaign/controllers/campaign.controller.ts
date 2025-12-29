@@ -1,5 +1,8 @@
-import { GetCampaignsUseCase } from '@application/usecases/campaign';
-import { CreateCampaignUseCase } from '@application/usecases/campaign/create-campaign.usecase';
+import {
+  CreateCampaignUseCase,
+  GetCampaignDetailUseCase,
+  GetCampaignsUseCase,
+} from '@application/usecases/campaign';
 import { AuthGuard } from '@infrastructure/guards';
 import {
   Body,
@@ -7,14 +10,21 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import {
   CreateCampaignRequestDto,
   CreateCampaignResponseDto,
+  GetCampaignDetailResponseDto,
   GetCampaignResponseDto,
 } from '../dto';
 
@@ -24,6 +34,7 @@ export class CampaignController {
   constructor(
     private readonly getCampaignsUseCase: GetCampaignsUseCase,
     private readonly createCampaignUseCase: CreateCampaignUseCase,
+    private readonly getCampaignDetailUseCase: GetCampaignDetailUseCase,
   ) {}
 
   @ApiOkResponse({
@@ -33,6 +44,20 @@ export class CampaignController {
   @Get()
   async getListCampaigns(): Promise<GetCampaignResponseDto[]> {
     return await this.getCampaignsUseCase.execute();
+  }
+
+  @ApiParam({
+    name: 'id',
+    example: 'campaign-id',
+  })
+  @ApiOkResponse({
+    type: GetCampaignDetailResponseDto,
+  })
+  @Get('/:id')
+  async getCampaignDetails(
+    @Param() param: { id: string },
+  ): Promise<GetCampaignDetailResponseDto> {
+    return await this.getCampaignDetailUseCase.execute(param);
   }
 
   @UseGuards(AuthGuard)

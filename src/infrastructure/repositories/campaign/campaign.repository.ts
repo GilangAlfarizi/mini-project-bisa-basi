@@ -62,8 +62,20 @@ export class CampaignRepository implements ICampaignRepository {
 
     return results[0] as unknown as Campaign;
   }
-  update(req: UpdateRequest<Campaign>, tx?: DBTransaction): Promise<void> {
-    throw new Error('Method not implemented.');
+  async update(
+    req: UpdateRequest<Campaign>,
+    tx?: DBTransaction,
+  ): Promise<void> {
+    await (tx ?? this.db)
+      .update(campaigns)
+      .set({
+        ...req.data,
+        name: req.data.name!,
+        categoryId: req.data.categoryId!,
+        description: req.data.description!,
+        totalAmount: req.data.totalAmount!,
+      })
+      .where(transformDrizzleWhereQuery(campaigns, req.where));
   }
   delete(req: DeleteRequest<Campaign>, tx?: DBTransaction): Promise<void> {
     throw new Error('Method not implemented.');

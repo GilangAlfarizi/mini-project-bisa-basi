@@ -3,6 +3,7 @@ import { RouterModule } from '@nestjs/core';
 import { AuthModule } from '@presentation/auth/auth.module';
 import { CampaignModule } from '@presentation/campaign/campaign.module';
 import { CategoryModule } from '@presentation/category/category.module';
+import { DonationModule } from '@presentation/donation/donation.module';
 
 import { CommonModule } from './common.module';
 
@@ -10,20 +11,25 @@ import { CommonModule } from './common.module';
   imports: [
     CommonModule,
     AuthModule,
-    CampaignModule,
     CategoryModule,
+    CampaignModule,
+    DonationModule,
     RouterModule.register([
       {
         path: '/auth',
         module: AuthModule,
       },
       {
+        path: '/category',
+        module: CategoryModule,
+      },
+      {
         path: '/campaign',
         module: CampaignModule,
       },
       {
-        path: '/category',
-        module: CategoryModule,
+        path: '/donation',
+        module: DonationModule,
       },
     ]),
   ],

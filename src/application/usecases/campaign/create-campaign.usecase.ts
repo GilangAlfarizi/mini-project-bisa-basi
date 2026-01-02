@@ -32,6 +32,7 @@ export class CreateCampaignUseCase {
             name: req.name,
             description: req.description,
             thumbnail: req.thumbnail ?? '-',
+            totalAmount: 0,
           },
         },
         tx,

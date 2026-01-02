@@ -76,7 +76,7 @@ describe('[use case] create campaign', () => {
       const result = await usecase.execute(mockRequestData);
 
       expect(mockCampaignRepository.create).toHaveBeenCalledWith(
-        { data: mockRequestData },
+        { data: { ...mockRequestData, totalAmount: 0 } },
         mockDatabase,
       );
       expect(result).toStrictEqual<CreateCampaignResponse>({
@@ -99,7 +99,7 @@ describe('[use case] create campaign', () => {
       });
 
       expect(mockCampaignRepository.create).toHaveBeenCalledWith(
-        { data: { ...mockRequestData, thumbnail: '-' } },
+        { data: { ...mockRequestData, totalAmount: 0, thumbnail: '-' } },
         mockDatabase,
       );
       expect(result).toStrictEqual<CreateCampaignResponse>({

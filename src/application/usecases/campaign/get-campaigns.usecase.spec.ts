@@ -6,11 +6,11 @@ import { GetCampaignsUseCase } from './get-campaigns.usecase';
 
 describe('[use case] get campaigns', () => {
   let usecase: GetCampaignsUseCase;
-  const mockCampapaignRepository: ICampaignRepository =
+  const mockCampaignRepository: ICampaignRepository =
     mock<ICampaignRepository>();
 
   beforeAll(() => {
-    usecase = new GetCampaignsUseCase(mockCampapaignRepository);
+    usecase = new GetCampaignsUseCase(mockCampaignRepository);
   });
 
   afterEach(() => {
@@ -19,15 +19,16 @@ describe('[use case] get campaigns', () => {
 
   const mockCampaignsData: GetCampaignsResponse = {
     id: faker.string.uuid(),
-    categoryId: faker.string.uuid(),
+    categoryName: faker.book.title(),
     name: faker.book.title(),
     description: faker.food.description(),
     thumbnail: faker.internet.url(),
+    totalAmount: faker.number.int({ min: 0, max: 1000000 }),
   };
 
   describe('execute()', () => {
     test('should return data', async () => {
-      mockCampapaignRepository.findMany = jest
+      mockCampaignRepository.findManyWithCategoryName = jest
         .fn()
         .mockResolvedValue([mockCampaignsData]);
 

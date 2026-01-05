@@ -1,5 +1,6 @@
 import { DB, schema } from '@database';
 import { envsConfig } from '@infrastructure/envs';
+import { HttpExceptionFilter } from '@infrastructure/filters';
 import { ResponseInterceptor } from '@infrastructure/interceptors';
 import { validationUtils } from '@infrastructure/utils';
 import { DrizzlePGModule } from '@knaadh/nestjs-drizzle-pg';
@@ -11,7 +12,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 
 @Global()
@@ -43,6 +44,10 @@ import { JwtModule } from '@nestjs/jwt';
   ],
 
   providers: [
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
     {
       provide: APP_INTERCEPTOR,
       useClass: ResponseInterceptor,

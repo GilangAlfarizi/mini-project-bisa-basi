@@ -1,7 +1,11 @@
+import { PaymentStatus } from '@domain/enums';
+
 export class GetUserDonationsResponse {
-  id: string;
+  categoryName: string;
   campaignId: string;
   campaignName: string;
-  donationAmount: number;
-  campaignTotalAmount: number;
+  amount: number;
+  totalAmount: number;
+  paymentType: string;
+  status: PaymentStatus;
 }

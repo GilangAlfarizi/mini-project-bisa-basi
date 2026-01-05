@@ -6,15 +6,6 @@ export class GetCampaignsUseCase {
   constructor(private readonly campaignRepository: ICampaignRepository) {}
 
   async execute(): Promise<GetCampaignsResponse[]> {
-    return await this.campaignRepository.findMany({
-      select: {
-        id: true,
-        categoryId: true,
-        name: true,
-        description: true,
-        thumbnail: true,
-      },
-      orderBy: { name: 'asc' },
-    });
+    return await this.campaignRepository.findManyWithCategoryName();
   }
 }

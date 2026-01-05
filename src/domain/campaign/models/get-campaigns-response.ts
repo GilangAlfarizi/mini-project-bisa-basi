@@ -1,7 +1,8 @@
 export class GetCampaignsResponse {
   id: string;
-  categoryId: string;
+  categoryName: string;
   name: string;
   description: string;
-  thumbnail?: string;
+  thumbnail: string;
+  totalAmount: number;
 }

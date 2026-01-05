@@ -1,5 +1,6 @@
 import { Database, DB, DBTransaction } from '@database';
 import { campaigns } from '@database/schema';
+import { categories } from '@database/schema';
 import {
   CreateRequest,
   DeleteRequest,
@@ -8,17 +9,40 @@ import {
   SelectedFields,
   UpdateRequest,
 } from '@domain/base';
-import { Campaign, ICampaignRepository } from '@domain/campaign';
+import {
+  Campaign,
+  GetCampaignsResponse,
+  ICampaignRepository,
+} from '@domain/campaign';
 import {
   transformDrizzleOrderByQuery,
   transformDrizzleWhereQuery,
 } from '@infrastructure/utils';
 import { Inject, Injectable } from '@nestjs/common';
+import { sql } from 'drizzle-orm';
 import { v7 as uuid } from 'uuid';
 
 @Injectable()
 export class CampaignRepository implements ICampaignRepository {
   constructor(@Inject(DB) private readonly db: Database) {}
+
+  async findManyWithCategoryName(
+    tx?: DBTransaction,
+  ): Promise<GetCampaignsResponse[]> {
+    const results = (tx ?? this.db)
+      .select({
+        id: campaigns.id,
+        categoryName: categories.name,
+        name: campaigns.name,
+        description: campaigns.description,
+        thumbnail: campaigns.thumbnail,
+        totalAmount: campaigns.totalAmount,
+      })
+      .from(campaigns)
+      .leftJoin(categories, sql`${campaigns.categoryId} = ${categories.id}`);
+
+    return results as unknown as GetCampaignsResponse[];
+  }
 
   async findOne<Req extends FindRequest<Campaign>>(
     req: Req,

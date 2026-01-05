@@ -1,9 +1,8 @@
-import { faker } from '@faker-js/faker';
 import { hashSync } from 'bcryptjs';
 
 export const usersDataConstant = [
   {
-    id: faker.string.uuid(),
+    id: 'df8bb538-cd97-4d1c-ad81-8e029f0663f2',
     name: 'Gilang Alfarizi',
     password: hashSync('passwordexample', 10),
     email: 'alfarizigilang@vokraf.com',

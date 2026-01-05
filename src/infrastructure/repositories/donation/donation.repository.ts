@@ -1,5 +1,5 @@
 import { Database, DB, DBTransaction } from '@database';
-import { donations } from '@database/schema';
+import { campaigns, categories, donations } from '@database/schema';
 import {
   CreateRequest,
   DeleteRequest,
@@ -8,17 +8,45 @@ import {
   SelectedFields,
   UpdateRequest,
 } from '@domain/base';
-import { IDonationRepository, Donation } from '@domain/donation';
+import {
+  IDonationRepository,
+  Donation,
+  GetUserDonationsResponse,
+  GetUserDonationsRequest,
+} from '@domain/donation';
 import {
   transformDrizzleOrderByQuery,
   transformDrizzleWhereQuery,
 } from '@infrastructure/utils';
 import { Inject, Injectable } from '@nestjs/common';
+import { eq, sql } from 'drizzle-orm';
 import { v7 as uuid } from 'uuid';
 
 @Injectable()
 export class DonationRepository implements IDonationRepository {
   constructor(@Inject(DB) private readonly db: Database) {}
+
+  async userDonationsWithCampaignAndCategory(
+    { userId }: GetUserDonationsRequest,
+    tx?: DBTransaction,
+  ): Promise<GetUserDonationsResponse[]> {
+    const results = (tx ?? this.db)
+      .select({
+        categoryName: categories.name,
+        campaignId: donations.campaignId,
+        campaignName: campaigns.name,
+        amount: donations.amount,
+        totalAmount: campaigns.totalAmount,
+        paymentType: donations.paymentType,
+        status: donations.status,
+      })
+      .from(donations)
+      .where(eq(donations.userId, userId))
+      .leftJoin(campaigns, sql`${donations.campaignId} = ${campaigns.id}`)
+      .leftJoin(categories, sql`${campaigns.categoryId} = ${categories.id}`);
+
+    return results as unknown as GetUserDonationsResponse[];
+  }
 
   async findOne<Req extends FindRequest<Donation>>(
     req: Req,

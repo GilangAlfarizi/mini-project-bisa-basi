@@ -4,8 +4,8 @@ export class GetCampaignResponseDto {
   @ApiProperty({ example: 'campaign-id' })
   id: string;
 
-  @ApiProperty({ example: 'category-id' })
-  categoryId: string;
+  @ApiProperty({ example: 'category-name' })
+  categoryName: string;
 
   @ApiProperty({ example: 'Bantu Banjir Sumatera' })
   name: string;
@@ -14,5 +14,8 @@ export class GetCampaignResponseDto {
   description: string;
 
   @ApiProperty({ example: 'thumbnail.url' })
-  thumbnail?: string;
+  thumbnail: string;
+
+  @ApiProperty({ example: 1000000 })
+  totalAmount: number;
 }

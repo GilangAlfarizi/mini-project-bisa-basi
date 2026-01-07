@@ -5,6 +5,10 @@ class Envs {
   databaseUrl!: string;
   jwtSecret!: string;
   jwtExpiresIn!: string;
+  mailerPort!: number;
+  mailerHost!: string;
+  mailerUser!: string;
+  mailerPass!: string;
 }
 
 export const validationSchema = Joi.object({
@@ -12,6 +16,10 @@ export const validationSchema = Joi.object({
   databaseUrl: Joi.string().required(),
   jwtSecret: Joi.string().required(),
   jwtExpiresIn: Joi.string().required(),
+  mailerHost: Joi.string().required(),
+  mailerPort: Joi.number().required(),
+  mailerUser: Joi.string().required(),
+  mailerPass: Joi.string().required(),
 });
 
 export const envsConfig = (): Envs => {
@@ -20,6 +28,10 @@ export const envsConfig = (): Envs => {
     databaseUrl: process.env.DATABASE_URL!,
     jwtSecret: process.env.JWT_SECRET!,
     jwtExpiresIn: process.env.JWT_EXPIRES_IN!,
+    mailerHost: process.env.MAILER_HOST!,
+    mailerPort: Number(process.env.MAILER_PORT!),
+    mailerUser: process.env.MAILER_USER!,
+    mailerPass: process.env.MAILER_PASS!,
   });
 
   if (error) throw new Error(error.message);

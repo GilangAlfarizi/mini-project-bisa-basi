@@ -6,6 +6,7 @@ export const usersDataConstant = [
     name: 'Gilang Alfarizi',
     password: hashSync('passwordexample', 10),
     email: 'alfarizigilang@vokraf.com',
+    isVerified: false,
     createdAt: '2025-10-23 06:36:38.189',
     updatedAt: '2025-10-23 06:36:38.189',
   },

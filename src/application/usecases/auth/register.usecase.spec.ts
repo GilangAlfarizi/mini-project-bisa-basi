@@ -1,4 +1,4 @@
-import { IHashService } from '@application/services';
+import { IHashService, IMailService } from '@application/services';
 import { ITokenService } from '@application/services/token.service';
 import { Database } from '@database';
 import { RegisterRequest, RegisterResponse } from '@domain/auth';
@@ -14,6 +14,7 @@ describe('[use case] register user', () => {
   const mockUserRepository: IUserRepository = mock<IUserRepository>();
   const mockHashService: IHashService = mock<IHashService>();
   const mockTokenService: ITokenService = mock<ITokenService>();
+  const mockMailService = mock<IMailService>();
 
   beforeAll(() => {
     usecase = new RegisterUseCase(
@@ -21,6 +22,7 @@ describe('[use case] register user', () => {
       mockUserRepository,
       mockHashService,
       mockTokenService,
+      mockMailService,
     );
   });
 

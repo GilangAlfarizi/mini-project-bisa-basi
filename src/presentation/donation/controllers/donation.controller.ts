@@ -13,7 +13,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import {
   CreateDonationRequestDto,
@@ -45,6 +45,21 @@ export class DonationController {
   @ApiOkResponse({
     description: 'Success',
     type: [GetUserDonationsResponseDto],
+  })
+  @ApiNotFoundResponse({
+    description: 'Not Found',
+    content: {
+      'application/json': {
+        examples: {
+          EnrollmentNotFound: {
+            summary: 'User not found',
+            value: {
+              code: 'USER_NOT_FOUND',
+            },
+          },
+        },
+      },
+    },
   })
   @Get('/:userId')
   async getUserDonations(

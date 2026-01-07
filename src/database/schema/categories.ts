@@ -1,13 +1,21 @@
-import { pgTable, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { index, pgTable, timestamp, varchar } from 'drizzle-orm/pg-core';
 
-export const categories = pgTable('categories', {
-  createdAt: timestamp('created_at', {
-    withTimezone: true,
-    mode: 'string',
-  }).defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
-    .defaultNow()
-    .$onUpdate(() => new Date().toISOString()),
-  id: varchar().primaryKey().notNull(),
-  name: varchar().notNull(),
-});
+export const categories = pgTable(
+  'categories',
+  {
+    createdAt: timestamp('created_at', {
+      withTimezone: true,
+      mode: 'string',
+    }).defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
+      .defaultNow()
+      .$onUpdate(() => new Date().toISOString()),
+    id: varchar().primaryKey().notNull(),
+    name: varchar().notNull(),
+  },
+  (table) => {
+    return {
+      nameIdx: index('categories_name_idx').on(table.name),
+    };
+  },
+);

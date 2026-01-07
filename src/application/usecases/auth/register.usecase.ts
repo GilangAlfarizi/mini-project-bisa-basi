@@ -1,4 +1,8 @@
-import { IHashService, ITokenService } from '@application/services';
+import {
+  IHashService,
+  IMailService,
+  ITokenService,
+} from '@application/services';
 import { DB, Database } from '@database';
 import {
   RegisterRequest,
@@ -15,6 +19,7 @@ export class RegisterUseCase {
     private readonly userRepository: IUserRepository,
     private readonly hashService: IHashService,
     private readonly tokenService: ITokenService,
+    private readonly mailService: IMailService,
   ) {}
 
   execute(req: RegisterRequest): Promise<RegisterResponse> {
@@ -51,6 +56,13 @@ export class RegisterUseCase {
       };
 
       const accessToken = await this.tokenService.generate({ payload });
+
+      await this.mailService.sendEmail({
+        from: { name: 'Bisa Basi', address: 'noreply@bisa.com' },
+        to: [{ name: user.name, address: user.email }],
+        subject: 'Welcome to Our Platform!',
+        text: `Hello ${user.name},\n\nThank you for registering at our service!\n\nBest regards,\nThe Team`,
+      });
 
       return {
         user: { ...payload },

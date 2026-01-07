@@ -4,6 +4,7 @@ import { HttpExceptionFilter } from '@infrastructure/filters';
 import { ResponseInterceptor } from '@infrastructure/interceptors';
 import { validationUtils } from '@infrastructure/utils';
 import { DrizzlePGModule } from '@knaadh/nestjs-drizzle-pg';
+import { MailerModule } from '@nestjs-modules/mailer';
 import {
   BadRequestException,
   Global,
@@ -40,6 +41,16 @@ import { JwtModule } from '@nestjs/jwt';
       global: true,
       secret: envsConfig().jwtSecret,
       signOptions: { expiresIn: envsConfig().jwtExpiresIn },
+    }),
+    MailerModule.forRoot({
+      transport: {
+        host: envsConfig().mailerHost,
+        port: envsConfig().mailerPort,
+        auth: {
+          user: envsConfig().mailerUser,
+          pass: envsConfig().mailerPass,
+        },
+      },
     }),
   ],
 

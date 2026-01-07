@@ -1,9 +1,16 @@
-import { IHashService } from '@application/services';
-import { ITokenService } from '@application/services/token.service';
+import {
+  IHashService,
+  IMailService,
+  ITokenService,
+} from '@application/services';
 import * as usecases from '@application/usecases/auth';
 import { IUserRepository } from '@domain/user';
 import { UserRepository } from '@infrastructure/repositories/user';
-import { HashService, TokenService } from '@infrastructure/services';
+import {
+  HashService,
+  MailService,
+  TokenService,
+} from '@infrastructure/services';
 import { Module, Provider } from '@nestjs/common';
 
 import * as controllers from './controllers';
@@ -23,6 +30,10 @@ const services: Provider[] = [
   {
     useClass: TokenService,
     provide: ITokenService,
+  },
+  {
+    useClass: MailService,
+    provide: IMailService,
   },
 ];
 

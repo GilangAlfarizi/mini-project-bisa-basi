@@ -59,7 +59,16 @@ export class UserRepository implements IUserRepository {
     return results[0] as unknown as User;
   }
   async update(req: UpdateRequest<User>, tx?: DBTransaction): Promise<void> {
-    throw new Error('Method not implemented.');
+    await (tx ?? this.db)
+      .update(users)
+      .set({
+        ...req.data,
+        name: req.data.name!,
+        password: req.data.password!,
+        email: req.data.email!,
+        isVerified: req.data.isVerified!,
+      })
+      .where(transformDrizzleWhereQuery(users, req.where));
   }
   delete(req: DeleteRequest<User>, tx?: DBTransaction): Promise<void> {
     throw new Error('Method not implemented.');

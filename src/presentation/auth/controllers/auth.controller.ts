@@ -1,9 +1,13 @@
-import { RegisterUseCase } from '@application/usecases/auth';
-import { LoginUseCase } from '@application/usecases/auth/login.usecase';
+import {
+  ConfirmEmailUseCase,
+  LoginUseCase,
+  RegisterUseCase,
+} from '@application/usecases/auth';
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import {
+  ConfirmEmailRequestDto,
   LoginRequestDto,
   LoginResponseDto,
   RegisterRequestDto,
@@ -16,6 +20,7 @@ export class AuthController {
   constructor(
     private readonly registerUseCase: RegisterUseCase,
     private readonly loginUseCase: LoginUseCase,
+    private readonly confirmEmailUseCase: ConfirmEmailUseCase,
   ) {}
 
   @ApiCreatedResponse({
@@ -38,5 +43,14 @@ export class AuthController {
   @Post('/login')
   async login(@Body() body: LoginRequestDto): Promise<LoginResponseDto> {
     return await this.loginUseCase.execute(body);
+  }
+
+  @ApiOkResponse({
+    description: 'Success',
+  })
+  @HttpCode(HttpStatus.OK)
+  @Post('/confirm-email')
+  async confirmEmail(@Body() body: ConfirmEmailRequestDto): Promise<void> {
+    return await this.confirmEmailUseCase.execute(body);
   }
 }

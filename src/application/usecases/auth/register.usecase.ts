@@ -1,6 +1,7 @@
 import {
   IHashService,
   IMailService,
+  IMailTemplateService,
   ITokenService,
 } from '@application/services';
 import { DB, Database } from '@database';
@@ -10,6 +11,12 @@ import {
   UserTokenPayload,
 } from '@domain/auth';
 import { IUserRepository } from '@domain/user';
+import {
+  MAIL_CONFIRM_EMAIL_SUBJECT,
+  MAIL_CONFIRM_URL,
+  MAIL_SENDER_ADDRESS,
+  MAIL_SENDER_NAME,
+} from '@infrastructure/constants';
 import { Injectable, Inject } from '@nestjs/common';
 
 @Injectable()
@@ -20,6 +27,7 @@ export class RegisterUseCase {
     private readonly hashService: IHashService,
     private readonly tokenService: ITokenService,
     private readonly mailService: IMailService,
+    private readonly mailTemplateService: IMailTemplateService,
   ) {}
 
   execute(req: RegisterRequest): Promise<RegisterResponse> {
@@ -35,6 +43,7 @@ export class RegisterUseCase {
       if (isUserExist) {
         throw new Error('REGISTER_USECASE.EMAIL_IS_ALREADY_IN_USE');
       }
+      console.log('a');
 
       const hashedPassword = await this.hashService.hash(req.password);
 
@@ -44,11 +53,13 @@ export class RegisterUseCase {
             name: req.name,
             password: hashedPassword,
             email: req.email,
+            isVerified: false,
           },
         },
         tx,
       );
 
+      console.log('b');
       const payload: UserTokenPayload = {
         id: user.id,
         name: user.name,
@@ -57,11 +68,18 @@ export class RegisterUseCase {
 
       const accessToken = await this.tokenService.generate({ payload });
 
+      console.log('c');
+      const mailTemplate = await this.mailTemplateService.verifyEmail({
+        name: user.name,
+        confirmUrl: `${MAIL_CONFIRM_URL}?token=${accessToken}`,
+      });
+
+      console.log('d');
       await this.mailService.sendEmail({
-        from: { name: 'Bisa Basi', address: 'noreply@bisa.com' },
+        from: { name: MAIL_SENDER_NAME, address: MAIL_SENDER_ADDRESS },
         to: [{ name: user.name, address: user.email }],
-        subject: 'Welcome to Our Platform!',
-        text: `Hello ${user.name},\n\nThank you for registering at our service!\n\nBest regards,\nThe Team`,
+        subject: MAIL_CONFIRM_EMAIL_SUBJECT,
+        html: mailTemplate,
       });
 
       return {

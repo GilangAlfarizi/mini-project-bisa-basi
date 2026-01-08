@@ -2,6 +2,7 @@ import {
   boolean,
   index,
   pgTable,
+  text,
   timestamp,
   uniqueIndex,
   varchar,
@@ -22,10 +23,12 @@ export const users = pgTable(
     password: varchar().notNull(),
     email: varchar().notNull().unique(),
     isVerified: boolean('is_verified').default(false).notNull(),
+    picUrl: text('pic_url'),
   },
   (table) => {
     return {
       nameIdx: index('users_name_idx').on(table.name),
+      picUrlIdx: index('users_pic_url_idx').on(table.picUrl),
       emailIdx: uniqueIndex('users_email_idx').on(table.email),
     };
   },

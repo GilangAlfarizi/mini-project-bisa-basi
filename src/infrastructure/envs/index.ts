@@ -9,6 +9,7 @@ class Envs {
   mailerHost!: string;
   mailerUser!: string;
   mailerPass!: string;
+  mailConfirmUrl!: string;
 }
 
 export const validationSchema = Joi.object({
@@ -20,6 +21,7 @@ export const validationSchema = Joi.object({
   mailerPort: Joi.number().required(),
   mailerUser: Joi.string().required(),
   mailerPass: Joi.string().required(),
+  mailConfirmUrl: Joi.string().required(),
 });
 
 export const envsConfig = (): Envs => {
@@ -32,6 +34,7 @@ export const envsConfig = (): Envs => {
     mailerPort: Number(process.env.MAILER_PORT!),
     mailerUser: process.env.MAILER_USER!,
     mailerPass: process.env.MAILER_PASS!,
+    mailConfirmUrl: process.env.MAIL_CONFIRM_URL!,
   });
 
   if (error) throw new Error(error.message);

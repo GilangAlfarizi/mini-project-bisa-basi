@@ -1,5 +1,9 @@
-import { IHashService, IMailService } from '@application/services';
-import { ITokenService } from '@application/services/token.service';
+import {
+  IHashService,
+  IMailService,
+  IMailTemplateService,
+  ITokenService,
+} from '@application/services';
 import { Database } from '@database';
 import { RegisterRequest, RegisterResponse } from '@domain/auth';
 import { IUserRepository, User } from '@domain/user';
@@ -15,6 +19,7 @@ describe('[use case] register user', () => {
   const mockHashService: IHashService = mock<IHashService>();
   const mockTokenService: ITokenService = mock<ITokenService>();
   const mockMailService = mock<IMailService>();
+  const mockMailTemplateService = mock<IMailTemplateService>();
 
   beforeAll(() => {
     usecase = new RegisterUseCase(
@@ -23,6 +28,7 @@ describe('[use case] register user', () => {
       mockHashService,
       mockTokenService,
       mockMailService,
+      mockMailTemplateService,
     );
   });
 
@@ -73,7 +79,11 @@ describe('[use case] register user', () => {
 
       expect(mockUserRepository.create).toHaveBeenCalledWith(
         {
-          data: { ...mockRequestData, password: hashedPassword },
+          data: {
+            ...mockRequestData,
+            password: hashedPassword,
+            isVerified: false,
+          },
         },
         mockDatabase,
       );

@@ -70,9 +70,11 @@ describe('[use case] register user', () => {
 
       mockUserRepository.findOne = jest.fn().mockResolvedValue(null);
       mockHashService.hash = jest.fn().mockReturnValue(hashedPassword);
-      mockUserRepository.create = jest
-        .fn()
-        .mockResolvedValueOnce({ ...mockUserData });
+      mockUserRepository.create = jest.fn().mockResolvedValueOnce({
+        ...mockUserData,
+        isVerified: false,
+        picUrl: null,
+      });
       mockTokenService.generate = jest.fn().mockReturnValue(accessToken);
 
       const result = await usecase.execute(mockRequestData);
@@ -83,6 +85,7 @@ describe('[use case] register user', () => {
             ...mockRequestData,
             password: hashedPassword,
             isVerified: false,
+            picUrl: null,
           },
         },
         mockDatabase,

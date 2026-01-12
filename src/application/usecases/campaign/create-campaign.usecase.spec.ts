@@ -1,3 +1,4 @@
+import { IImageService } from '@application/services';
 import { Database } from '@database';
 import {
   Campaign,
@@ -8,6 +9,7 @@ import {
 import { ICategoryRepository } from '@domain/category';
 import { faker } from '@faker-js/faker';
 import { mock } from 'jest-mock-extended';
+import { Readable } from 'stream';
 
 import { CreateCampaignUseCase } from './create-campaign.usecase';
 
@@ -18,12 +20,14 @@ describe('[use case] create campaign', () => {
     mock<ICampaignRepository>();
   const mockCategoryRepository: ICategoryRepository =
     mock<ICategoryRepository>();
+  const mockImageService: IImageService = mock<IImageService>();
 
   beforeAll(() => {
     usecase = new CreateCampaignUseCase(
       mockDatabase,
       mockCampaignRepository,
       mockCategoryRepository,
+      mockImageService,
     );
   });
 
@@ -41,7 +45,23 @@ describe('[use case] create campaign', () => {
     categoryId: 'category-id',
     name: faker.book.title(),
     description: faker.word.words(10),
-    thumbnail: faker.internet.url(),
+    thumbnail: {
+      fieldname: 'file',
+      originalname: 'profile.jpg',
+      encoding: '7bit',
+      mimetype: 'image/jpeg',
+      size: 204800,
+      buffer: Buffer.from('mock-image-data'),
+      destination: '',
+      filename: '',
+      path: '',
+      stream: new Readable(),
+    },
+  };
+
+  const uploadResult = {
+    url: faker.internet.url(),
+    public_id: faker.string.uuid(),
   };
 
   const mockCampaignData: Pick<
@@ -52,7 +72,7 @@ describe('[use case] create campaign', () => {
     id: faker.string.uuid(),
     name: mockRequestData.name,
     description: mockRequestData.description,
-    thumbnail: mockRequestData.thumbnail,
+    thumbnail: uploadResult.url,
   };
 
   describe('execute()', () => {
@@ -69,6 +89,10 @@ describe('[use case] create campaign', () => {
         .fn()
         .mockResolvedValue({ id: mockRequestData.categoryId });
 
+      mockImageService.uploadPicture = jest
+        .fn()
+        .mockResolvedValue(uploadResult);
+
       mockCampaignRepository.create = jest
         .fn()
         .mockResolvedValueOnce({ id: mockCampaignData.id });
@@ -76,30 +100,14 @@ describe('[use case] create campaign', () => {
       const result = await usecase.execute(mockRequestData);
 
       expect(mockCampaignRepository.create).toHaveBeenCalledWith(
-        { data: { ...mockRequestData, totalAmount: 0 } },
-        mockDatabase,
-      );
-      expect(result).toStrictEqual<CreateCampaignResponse>({
-        id: result.id,
-      });
-    });
-
-    test('should successfully create a category without thumbnail', async () => {
-      mockCategoryRepository.findOne = jest
-        .fn()
-        .mockResolvedValue({ id: mockRequestData.categoryId });
-
-      mockCampaignRepository.create = jest
-        .fn()
-        .mockResolvedValueOnce({ ...mockCampaignData, thumbnail: '-' });
-
-      const result = await usecase.execute({
-        ...mockRequestData,
-        thumbnail: undefined,
-      });
-
-      expect(mockCampaignRepository.create).toHaveBeenCalledWith(
-        { data: { ...mockRequestData, totalAmount: 0, thumbnail: '-' } },
+        {
+          data: {
+            ...mockRequestData,
+            thumbnail: uploadResult.url,
+            thumbnailId: uploadResult.public_id,
+            totalAmount: 0,
+          },
+        },
         mockDatabase,
       );
       expect(result).toStrictEqual<CreateCampaignResponse>({

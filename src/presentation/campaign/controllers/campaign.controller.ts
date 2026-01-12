@@ -3,18 +3,29 @@ import {
   GetCampaignDetailUseCase,
   GetCampaignsUseCase,
 } from '@application/usecases/campaign';
+import {
+  TWO_MB_IN_BYTE,
+  TWO_MB_VALIDATION_ERROR,
+} from '@infrastructure/constants';
 import { AuthGuard } from '@infrastructure/guards';
 import {
   Body,
   Controller,
+  FileTypeValidator,
   Get,
   HttpCode,
   HttpStatus,
+  MaxFileSizeValidator,
   Param,
+  ParseFilePipe,
   Post,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiParam,
@@ -61,15 +72,35 @@ export class CampaignController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @ApiCreatedResponse({
     description: 'Success',
     type: CreateCampaignResponseDto,
   })
   @HttpCode(HttpStatus.CREATED)
   @Post()
+  @UseInterceptors(FileInterceptor('file'))
   async createCategory(
     @Body() body: CreateCampaignRequestDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({
+            fileType: 'image/jpeg|image/png|image/webp',
+          }),
+          new MaxFileSizeValidator({
+            maxSize: TWO_MB_IN_BYTE,
+            message: TWO_MB_VALIDATION_ERROR,
+          }),
+        ],
+        fileIsRequired: true,
+      }),
+    )
+    file: Express.Multer.File,
   ): Promise<CreateCampaignResponseDto> {
-    return await this.createCampaignUseCase.execute(body);
+    return await this.createCampaignUseCase.execute({
+      ...body,
+      thumbnail: file,
+    });
   }
 }

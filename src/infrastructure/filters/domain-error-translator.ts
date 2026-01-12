@@ -15,7 +15,13 @@ interface IDomainErrorTranslator {
 }
 
 const directories = {
+  'GET_CAMPAIGN_DETAIL_USECASE.CAMPAIGN_NOT_FOUND': new NotFoundException(
+    'CAMPAIGN_NOT_FOUND',
+  ),
   'GET_USER_DONATIONS_USECASE.USER_NOT_FOUND': new NotFoundException(
+    'USER_NOT_FOUND',
+  ),
+  'UPDATE_USER_PROFILE_USECASE.USER_NOT_FOUND': new BadRequestException(
     'USER_NOT_FOUND',
   ),
 };

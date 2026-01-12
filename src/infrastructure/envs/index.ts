@@ -10,6 +10,9 @@ class Envs {
   mailerUser!: string;
   mailerPass!: string;
   mailConfirmUrl!: string;
+  cloudinaryCloudName!: string;
+  cloudinaryApiKey!: string;
+  cloudinaryApiSecret!: string;
 }
 
 export const validationSchema = Joi.object({
@@ -22,6 +25,9 @@ export const validationSchema = Joi.object({
   mailerUser: Joi.string().required(),
   mailerPass: Joi.string().required(),
   mailConfirmUrl: Joi.string().required(),
+  cloudinaryCloudName: Joi.string().required(),
+  cloudinaryApiKey: Joi.string().required(),
+  cloudinaryApiSecret: Joi.string().required(),
 });
 
 export const envsConfig = (): Envs => {
@@ -35,6 +41,9 @@ export const envsConfig = (): Envs => {
     mailerUser: process.env.MAILER_USER!,
     mailerPass: process.env.MAILER_PASS!,
     mailConfirmUrl: process.env.MAIL_CONFIRM_URL!,
+    cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME!,
+    cloudinaryApiKey: process.env.CLOUDINARY_API_KEY!,
+    cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET!,
   });
 
   if (error) throw new Error(error.message);

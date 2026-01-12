@@ -1,4 +1,11 @@
-import { index, pgTable, real, timestamp, varchar } from 'drizzle-orm/pg-core';
+import {
+  index,
+  pgTable,
+  real,
+  timestamp,
+  uniqueIndex,
+  varchar,
+} from 'drizzle-orm/pg-core';
 
 import { categories } from './categories';
 
@@ -19,6 +26,7 @@ export const campaigns = pgTable(
     name: varchar().notNull(),
     description: varchar().notNull(),
     thumbnail: varchar(),
+    thumbnailId: varchar('thumbnail_id').unique(),
     totalAmount: real('total_amount').notNull(),
   },
   (table) => {
@@ -26,6 +34,10 @@ export const campaigns = pgTable(
       categoryIdx: index('campaigns_category_idx').on(table.categoryId),
       name: index('campaigns_name_idx').on(table.name),
       totalAmountIdx: index('campaigns_total_amount_idx').on(table.totalAmount),
+      thumbnail: index('campaigns_thumbnail_idx').on(table.thumbnail),
+      thumbnailId: uniqueIndex('campaigns_thumbnail_id_idx').on(
+        table.thumbnailId,
+      ),
     };
   },
 );

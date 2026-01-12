@@ -12,7 +12,12 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import {
   CreateCategoryRequestDto,
@@ -38,6 +43,7 @@ export class CategoryController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @ApiCreatedResponse({
     description: 'Success',
     type: CreateCategoryResponseDto,

@@ -43,7 +43,6 @@ export class RegisterUseCase {
       if (isUserExist) {
         throw new Error('REGISTER_USECASE.EMAIL_IS_ALREADY_IN_USE');
       }
-      console.log('a');
 
       const hashedPassword = await this.hashService.hash(req.password);
 
@@ -54,12 +53,12 @@ export class RegisterUseCase {
             password: hashedPassword,
             email: req.email,
             isVerified: false,
+            picUrl: null,
           },
         },
         tx,
       );
 
-      console.log('b');
       const payload: UserTokenPayload = {
         id: user.id,
         name: user.name,
@@ -68,13 +67,11 @@ export class RegisterUseCase {
 
       const accessToken = await this.tokenService.generate({ payload });
 
-      console.log('c');
       const mailTemplate = await this.mailTemplateService.verifyEmail({
         name: user.name,
         confirmUrl: `${MAIL_CONFIRM_URL}?token=${accessToken}`,
       });
 
-      console.log('d');
       await this.mailService.sendEmail({
         from: { name: MAIL_SENDER_NAME, address: MAIL_SENDER_ADDRESS },
         to: [{ name: user.name, address: user.email }],

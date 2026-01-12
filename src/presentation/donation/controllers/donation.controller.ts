@@ -13,7 +13,12 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import {
   CreateDonationRequestDto,
@@ -22,6 +27,7 @@ import {
 } from '../dto';
 
 @UseGuards(AuthGuard)
+@ApiBearerAuth()
 @ApiTags('Donation')
 @Controller({ version: '1' })
 export class DonationController {

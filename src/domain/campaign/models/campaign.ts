@@ -6,5 +6,6 @@ export class Campaign {
   name: string;
   description: string;
   thumbnail?: string;
+  thumbnailId?: string;
   totalAmount: number;
 }

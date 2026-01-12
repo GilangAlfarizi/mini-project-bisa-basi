@@ -6,4 +6,6 @@ export class User {
   password: string;
   email: string;
   isVerified: boolean;
+  picUrl?: string | null;
+  picId?: string | null;
 }

@@ -1,9 +1,7 @@
 import { IImageService } from '@application/services';
-import * as usecases from '@application/usecases/campaign';
-import { ICampaignRepository } from '@domain/campaign';
-import { ICategoryRepository } from '@domain/category';
-import { CampaignRepository } from '@infrastructure/repositories/campaign';
-import { CategoryRepository } from '@infrastructure/repositories/category';
+import * as usecases from '@application/usecases/user';
+import { IUserRepository } from '@domain/user';
+import { UserRepository } from '@infrastructure/repositories/user';
 import { ImageService } from '@infrastructure/services';
 import { Module, Provider } from '@nestjs/common';
 
@@ -11,12 +9,8 @@ import * as controllers from './controllers';
 
 const repositories: Provider[] = [
   {
-    useClass: CampaignRepository,
-    provide: ICampaignRepository,
-  },
-  {
-    useClass: CategoryRepository,
-    provide: ICategoryRepository,
+    useClass: UserRepository,
+    provide: IUserRepository,
   },
 ];
 
@@ -35,4 +29,4 @@ const services: Provider[] = [
     ...Object.values(services),
   ],
 })
-export class CampaignModule {}
+export class UserModule {}

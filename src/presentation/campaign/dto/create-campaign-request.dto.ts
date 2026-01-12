@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDefined, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsDefined, IsEmpty, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateCampaignRequestDto {
   @ApiProperty({ example: 'Bantu Pendidikan Yatim Piatu' })
@@ -20,8 +20,7 @@ export class CreateCampaignRequestDto {
   @IsString()
   description: string;
 
-  @ApiProperty({ example: 'thumbnail.url' })
-  @IsOptional()
-  @IsString()
-  thumbnail?: string;
+  @ApiProperty({ example: 'thumbnail image' })
+  @IsEmpty()
+  thumbnail: Express.Multer.File;
 }

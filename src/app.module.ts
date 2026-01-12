@@ -4,6 +4,7 @@ import { AuthModule } from '@presentation/auth/auth.module';
 import { CampaignModule } from '@presentation/campaign/campaign.module';
 import { CategoryModule } from '@presentation/category/category.module';
 import { DonationModule } from '@presentation/donation/donation.module';
+import { UserModule } from '@presentation/user/user.module';
 
 import { CommonModule } from './common.module';
 
@@ -11,6 +12,7 @@ import { CommonModule } from './common.module';
   imports: [
     CommonModule,
     AuthModule,
+    UserModule,
     CategoryModule,
     CampaignModule,
     DonationModule,
@@ -18,6 +20,10 @@ import { CommonModule } from './common.module';
       {
         path: '/auth',
         module: AuthModule,
+      },
+      {
+        path: '/user',
+        module: UserModule,
       },
       {
         path: '/category',

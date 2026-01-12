@@ -1,3 +1,4 @@
+import { IImageService } from '@application/services';
 import { Database, DB } from '@database';
 import {
   CreateCampaignRequest,
@@ -13,6 +14,7 @@ export class CreateCampaignUseCase {
     @Inject(DB) private readonly db: Database,
     private readonly campaignRepository: ICampaignRepository,
     private readonly categoryRepository: ICategoryRepository,
+    private readonly imageService: IImageService,
   ) {}
 
   execute(req: CreateCampaignRequest): Promise<CreateCampaignResponse> {
@@ -25,13 +27,19 @@ export class CreateCampaignUseCase {
       if (!category)
         throw new Error('CREATE_CAMPAIGN_USECASE.CATEGORY_NOT_FOUND');
 
+      const uploadResult = await this.imageService.uploadPicture({
+        buffer: req.thumbnail.buffer,
+        path: 'campaigns',
+      });
+
       const campaign = await this.campaignRepository.create(
         {
           data: {
             categoryId: req.categoryId,
             name: req.name,
             description: req.description,
-            thumbnail: req.thumbnail ?? '-',
+            thumbnail: uploadResult.url,
+            thumbnailId: uploadResult.public_id,
             totalAmount: 0,
           },
         },

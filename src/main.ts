@@ -12,6 +12,7 @@ async function bootstrap() {
     .setTitle('Bisa Basi API')
     .setDescription('Learning API to handle third party services')
     .setVersion('1.0.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, options);

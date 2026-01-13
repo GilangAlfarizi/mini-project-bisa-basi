@@ -20,7 +20,7 @@ export class UpdateUserProfilePictureUseCase {
         {
           select: {
             id: true,
-            picId: true,
+            picUrl: true,
           },
           where: { id: userId },
         },
@@ -34,13 +34,13 @@ export class UpdateUserProfilePictureUseCase {
         path: 'users',
       });
 
-      if (user.picId) {
-        await this.imageService.deleteOldPicture(user.picId);
+      if (user.picUrl) {
+        await this.imageService.deleteOldPicture(user.picUrl);
       }
 
       await this.userRepository.update(
         {
-          data: { picUrl: uploadResult.url, picId: uploadResult.public_id },
+          data: { picUrl: uploadResult.url },
           where: { id: userId },
         },
         tx,

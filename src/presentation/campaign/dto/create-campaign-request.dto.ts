@@ -20,7 +20,7 @@ export class CreateCampaignRequestDto {
   @IsString()
   description: string;
 
-  @ApiProperty({ example: 'thumbnail image' })
+  @ApiProperty({ type: 'string', format: 'binary' })
   @IsEmpty()
-  thumbnail: Express.Multer.File;
+  file?: any;
 }

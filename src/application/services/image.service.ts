@@ -1,6 +1,6 @@
-import { UploadImageRequest } from '@domain/image';
+import { UploadImageRequest, UploadImageResponse } from '@domain/image';
 
 export abstract class IImageService {
-  abstract uploadPicture(req: UploadImageRequest): Promise<any>;
-  abstract deleteOldPicture(publicId: string): Promise<any>;
+  abstract uploadPicture(req: UploadImageRequest): Promise<UploadImageResponse>;
+  abstract deleteOldPicture(url: string): Promise<void>;
 }

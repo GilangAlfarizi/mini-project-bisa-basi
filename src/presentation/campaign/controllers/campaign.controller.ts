@@ -26,6 +26,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
+  ApiConsumes,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiParam,
@@ -73,6 +74,7 @@ export class CampaignController {
 
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
   @ApiCreatedResponse({
     description: 'Success',
     type: CreateCampaignResponseDto,
@@ -80,7 +82,7 @@ export class CampaignController {
   @HttpCode(HttpStatus.CREATED)
   @Post()
   @UseInterceptors(FileInterceptor('file'))
-  async createCategory(
+  async createCampaign(
     @Body() body: CreateCampaignRequestDto,
     @UploadedFile(
       new ParseFilePipe({
@@ -98,9 +100,6 @@ export class CampaignController {
     )
     file: Express.Multer.File,
   ): Promise<CreateCampaignResponseDto> {
-    return await this.createCampaignUseCase.execute({
-      ...body,
-      thumbnail: file,
-    });
+    return await this.createCampaignUseCase.execute({ ...body, file });
   }
 }

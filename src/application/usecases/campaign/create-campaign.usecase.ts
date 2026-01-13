@@ -28,7 +28,7 @@ export class CreateCampaignUseCase {
         throw new Error('CREATE_CAMPAIGN_USECASE.CATEGORY_NOT_FOUND');
 
       const uploadResult = await this.imageService.uploadPicture({
-        buffer: req.thumbnail.buffer,
+        buffer: req.file.buffer,
         path: 'campaigns',
       });
 
@@ -39,7 +39,6 @@ export class CreateCampaignUseCase {
             name: req.name,
             description: req.description,
             thumbnail: uploadResult.url,
-            thumbnailId: uploadResult.public_id,
             totalAmount: 0,
           },
         },

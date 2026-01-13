@@ -2,6 +2,7 @@ import { DB, schema } from '@database';
 import { envsConfig } from '@infrastructure/envs';
 import { HttpExceptionFilter } from '@infrastructure/filters';
 import { ResponseInterceptor } from '@infrastructure/interceptors';
+import { CLOUDINARY } from '@infrastructure/symbols';
 import { validationUtils } from '@infrastructure/utils';
 import { DrizzlePGModule } from '@knaadh/nestjs-drizzle-pg';
 import { MailerModule } from '@nestjs-modules/mailer';
@@ -15,6 +16,7 @@ import {
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
+import { v2 as cloudinary } from 'cloudinary';
 
 @Global()
 @Module({
@@ -64,6 +66,17 @@ import { JwtModule } from '@nestjs/jwt';
       useClass: ResponseInterceptor,
     },
     {
+      provide: CLOUDINARY,
+      useFactory() {
+        cloudinary.config({
+          cloud_name: envsConfig().cloudinaryCloudName,
+          api_key: envsConfig().cloudinaryApiKey,
+          api_secret: envsConfig().cloudinaryApiSecret,
+        });
+        return cloudinary;
+      },
+    },
+    {
       provide: APP_PIPE,
       useFactory() {
         return new ValidationPipe({
@@ -81,5 +94,6 @@ import { JwtModule } from '@nestjs/jwt';
       },
     },
   ],
+  exports: [CLOUDINARY],
 })
 export class CommonModule {}

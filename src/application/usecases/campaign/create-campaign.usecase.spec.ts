@@ -45,7 +45,7 @@ describe('[use case] create campaign', () => {
     categoryId: 'category-id',
     name: faker.book.title(),
     description: faker.word.words(10),
-    thumbnail: {
+    file: {
       fieldname: 'file',
       originalname: 'profile.jpg',
       encoding: '7bit',
@@ -102,9 +102,10 @@ describe('[use case] create campaign', () => {
       expect(mockCampaignRepository.create).toHaveBeenCalledWith(
         {
           data: {
-            ...mockRequestData,
+            categoryId: mockRequestData.categoryId,
+            name: mockRequestData.name,
+            description: mockRequestData.description,
             thumbnail: uploadResult.url,
-            thumbnailId: uploadResult.public_id,
             totalAmount: 0,
           },
         },

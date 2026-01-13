@@ -51,9 +51,9 @@ describe('[use case] update user profile picture', () => {
     },
   };
 
-  const mockUserData: Pick<User, 'id' | 'picId'> = {
+  const mockUserData: Pick<User, 'id' | 'picUrl'> = {
     id: faker.string.uuid(),
-    picId: null,
+    picUrl: null,
   };
 
   const uploadResult = {
@@ -82,7 +82,7 @@ describe('[use case] update user profile picture', () => {
 
       expect(mockUserRepository.update).toHaveBeenCalledWith(
         {
-          data: { picUrl: uploadResult.url, picId: uploadResult.public_id },
+          data: { picUrl: uploadResult.url },
           where: { id: mockRequestData.userId },
         },
         mockDatabase,
@@ -92,7 +92,7 @@ describe('[use case] update user profile picture', () => {
     test('should successfully replace a profile picture', async () => {
       mockUserRepository.findOne = jest
         .fn()
-        .mockResolvedValue({ ...mockUserData, picId: faker.string.uuid() });
+        .mockResolvedValue({ ...mockUserData, picUrl: faker.internet.url() });
 
       mockImageService.uploadPicture = jest
         .fn()
@@ -103,7 +103,7 @@ describe('[use case] update user profile picture', () => {
 
       expect(mockUserRepository.update).toHaveBeenCalledWith(
         {
-          data: { picUrl: uploadResult.url, picId: uploadResult.public_id },
+          data: { picUrl: uploadResult.url },
           where: { id: mockRequestData.userId },
         },
         mockDatabase,

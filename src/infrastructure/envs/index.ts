@@ -13,6 +13,9 @@ class Envs {
   cloudinaryCloudName!: string;
   cloudinaryApiKey!: string;
   cloudinaryApiSecret!: string;
+  isProduction!: boolean;
+  midtransClientKey!: string;
+  midtransServerKey!: string;
 }
 
 export const validationSchema = Joi.object({
@@ -28,6 +31,9 @@ export const validationSchema = Joi.object({
   cloudinaryCloudName: Joi.string().required(),
   cloudinaryApiKey: Joi.string().required(),
   cloudinaryApiSecret: Joi.string().required(),
+  isProduction: Joi.boolean().required(),
+  midtransClientKey: Joi.string().required(),
+  midtransServerKey: Joi.string().required(),
 });
 
 export const envsConfig = (): Envs => {
@@ -44,6 +50,9 @@ export const envsConfig = (): Envs => {
     cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME!,
     cloudinaryApiKey: process.env.CLOUDINARY_API_KEY!,
     cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET!,
+    isProduction: process.env.IS_PRODUCTION!,
+    midtransClientKey: process.env.MIDTRANS_CLIENT_KEY!,
+    midtransServerKey: process.env.MIDTRANS_SERVER_KEY!,
   });
 
   if (error) throw new Error(error.message);

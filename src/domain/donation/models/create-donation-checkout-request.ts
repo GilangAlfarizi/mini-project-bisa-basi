@@ -1,6 +1,5 @@
-export class CreateDonationRequest {
+export class CreateDonationCheckoutRequest {
   userId: string;
   campaignId: string;
-  paymentType: string;
   amount: number;
 }

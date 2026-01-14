@@ -17,6 +17,7 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { v2 as cloudinary } from 'cloudinary';
+import { Snap } from 'midtrans-client';
 
 @Global()
 @Module({
@@ -93,7 +94,17 @@ import { v2 as cloudinary } from 'cloudinary';
         });
       },
     },
+    {
+      provide: Snap,
+      useFactory: () => {
+        return new Snap({
+          isProduction: envsConfig().isProduction,
+          clientKey: envsConfig().midtransClientKey,
+          serverKey: envsConfig().midtransServerKey,
+        });
+      },
+    },
   ],
-  exports: [CLOUDINARY],
+  exports: [CLOUDINARY, Snap],
 })
 export class CommonModule {}

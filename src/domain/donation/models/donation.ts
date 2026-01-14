@@ -6,7 +6,9 @@ export class Donation {
   id: string;
   userId: string;
   campaignId: string;
-  paymentType: string;
+  paymentType?: string;
+  orderId?: string;
+  midtransToken?: string;
   amount: number;
   status: PaymentStatus;
 }

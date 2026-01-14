@@ -1,7 +1,10 @@
 import {
+  CreateDonationCheckoutUseCase,
   CreateDonationUseCase,
   GetUserDonationsUseCase,
 } from '@application/usecases/donation';
+import { UserTokenPayload } from '@domain/auth';
+import { AuthRequest } from '@infrastructure/decorators';
 import { AuthGuard } from '@infrastructure/guards';
 import {
   Body,
@@ -21,6 +24,8 @@ import {
 } from '@nestjs/swagger';
 
 import {
+  CreateDonationCheckoutRequestDto,
+  CreateDonationCheckoutResponseDto,
   CreateDonationRequestDto,
   CreateDonationResponseDto,
   GetUserDonationsResponseDto,
@@ -34,6 +39,7 @@ export class DonationController {
   constructor(
     private readonly createDonationUseCase: CreateDonationUseCase,
     private readonly getUserDonationsUseCase: GetUserDonationsUseCase,
+    private readonly createDonationCheckoutUseCase: CreateDonationCheckoutUseCase,
   ) {}
 
   @ApiOkResponse({
@@ -72,5 +78,21 @@ export class DonationController {
     @Param() param: { userId: string },
   ): Promise<GetUserDonationsResponseDto[]> {
     return await this.getUserDonationsUseCase.execute(param);
+  }
+
+  @ApiOkResponse({
+    description: 'Success',
+    type: CreateDonationCheckoutResponseDto,
+  })
+  @HttpCode(HttpStatus.CREATED)
+  @Post('/checkout')
+  async createDonationCheckout(
+    @AuthRequest() payload: UserTokenPayload,
+    @Body() body: CreateDonationCheckoutRequestDto,
+  ): Promise<CreateDonationCheckoutResponseDto> {
+    return await this.createDonationCheckoutUseCase.execute({
+      ...body,
+      userId: payload.id,
+    });
   }
 }

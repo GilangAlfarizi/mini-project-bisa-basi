@@ -87,8 +87,21 @@ export class DonationRepository implements IDonationRepository {
 
     return results[0] as unknown as Donation;
   }
-  update(req: UpdateRequest<Donation>, tx?: DBTransaction): Promise<void> {
-    throw new Error('Method not implemented.');
+  async update(
+    req: UpdateRequest<Donation>,
+    tx?: DBTransaction,
+  ): Promise<void> {
+    await (tx ?? this.db)
+      .update(donations)
+      .set({
+        ...req.data,
+        userId: req.data.userId!,
+        campaignId: req.data.campaignId!,
+        paymentType: req.data.paymentType!,
+        amount: req.data.amount!,
+        status: req.data.status!,
+      })
+      .where(transformDrizzleWhereQuery(donations, req.where));
   }
   delete(req: DeleteRequest<Donation>, tx?: DBTransaction): Promise<void> {
     throw new Error('Method not implemented.');

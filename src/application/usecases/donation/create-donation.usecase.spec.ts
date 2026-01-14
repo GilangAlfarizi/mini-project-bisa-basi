@@ -41,7 +41,6 @@ describe('[use case] create donation', () => {
     campaignId: faker.string.uuid(),
     paymentType: 'DANA',
     amount: 100,
-    status: PaymentStatus.SETTLEMENT,
   };
 
   describe('execute()', () => {
@@ -80,7 +79,7 @@ describe('[use case] create donation', () => {
       const result = await usecase.execute(mockRequestData);
 
       expect(mockDonationRepository.create).toHaveBeenCalledWith(
-        { data: mockRequestData },
+        { data: { ...mockRequestData, status: PaymentStatus.PENDING } },
         mockDatabase,
       );
       expect(mockCampaignRepository.update).toHaveBeenCalledWith(

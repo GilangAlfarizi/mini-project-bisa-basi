@@ -1,6 +1,7 @@
 import { Database, DB } from '@database';
 import { CreateCampaignResponse, ICampaignRepository } from '@domain/campaign';
 import { CreateDonationRequest, IDonationRepository } from '@domain/donation';
+import { PaymentStatus } from '@domain/enums';
 import { IUserRepository } from '@domain/user';
 import { Inject, Injectable } from '@nestjs/common';
 
@@ -32,15 +33,13 @@ export class CreateDonationUseCase {
 
       const donation = await this.donationRepository.create(
         {
-          data: { ...req },
-        },
-        tx,
-      );
-
-      await this.campaignRepository.update(
-        {
-          data: { totalAmount: campaign.totalAmount + req.amount },
-          where: { id: campaign.id },
+          data: {
+            userId: req.userId,
+            campaignId: req.campaignId,
+            paymentType: req.paymentType,
+            amount: req.amount,
+            status: PaymentStatus.PENDING,
+          },
         },
         tx,
       );

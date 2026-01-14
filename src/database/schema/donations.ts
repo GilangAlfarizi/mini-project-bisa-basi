@@ -21,7 +21,9 @@ export const donations = pgTable(
     campaignId: varchar('campaign_id')
       .notNull()
       .references(() => campaigns.id),
-    paymentType: varchar('payment_type').notNull(),
+    paymentType: varchar('payment_type'),
+    orderId: varchar('order_id'),
+    midtransToken: varchar('midtrans_token'),
     amount: real().notNull(),
     status: varchar().$type<PaymentStatus>().notNull(),
   },

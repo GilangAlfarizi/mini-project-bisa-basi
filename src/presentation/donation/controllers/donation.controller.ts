@@ -1,6 +1,5 @@
 import {
-  CreateDonationCheckoutUseCase,
-  CreateDonationUseCase,
+  CreateUserDonationUseCase,
   GetUserDonationsUseCase,
 } from '@application/usecases/donation';
 import { UserTokenPayload } from '@domain/auth';
@@ -12,7 +11,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Param,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -24,10 +22,8 @@ import {
 } from '@nestjs/swagger';
 
 import {
-  CreateDonationCheckoutRequestDto,
-  CreateDonationCheckoutResponseDto,
-  CreateDonationRequestDto,
-  CreateDonationResponseDto,
+  CreateUserDonationRequestDto,
+  CreateUserDonationResponseDto,
   GetUserDonationsResponseDto,
 } from '../dto';
 
@@ -37,21 +33,24 @@ import {
 @Controller({ version: '1' })
 export class DonationController {
   constructor(
-    private readonly createDonationUseCase: CreateDonationUseCase,
     private readonly getUserDonationsUseCase: GetUserDonationsUseCase,
-    private readonly createDonationCheckoutUseCase: CreateDonationCheckoutUseCase,
+    private readonly createUserDonationUseCase: CreateUserDonationUseCase,
   ) {}
 
   @ApiOkResponse({
     description: 'Success',
-    type: CreateDonationResponseDto,
+    type: CreateUserDonationResponseDto,
   })
-  @HttpCode(HttpStatus.OK)
-  @Post()
-  async createDonation(
-    @Body() body: CreateDonationRequestDto,
-  ): Promise<CreateDonationResponseDto> {
-    return await this.createDonationUseCase.execute(body);
+  @HttpCode(HttpStatus.CREATED)
+  @Post('/')
+  async createUserDonation(
+    @AuthRequest() payload: UserTokenPayload,
+    @Body() body: CreateUserDonationRequestDto,
+  ): Promise<CreateUserDonationResponseDto> {
+    return await this.createUserDonationUseCase.execute({
+      ...body,
+      userId: payload.id,
+    });
   }
 
   @ApiOkResponse({
@@ -73,26 +72,10 @@ export class DonationController {
       },
     },
   })
-  @Get('/:userId')
+  @Get('/history')
   async getUserDonations(
-    @Param() param: { userId: string },
-  ): Promise<GetUserDonationsResponseDto[]> {
-    return await this.getUserDonationsUseCase.execute(param);
-  }
-
-  @ApiOkResponse({
-    description: 'Success',
-    type: CreateDonationCheckoutResponseDto,
-  })
-  @HttpCode(HttpStatus.CREATED)
-  @Post('/checkout')
-  async createDonationCheckout(
     @AuthRequest() payload: UserTokenPayload,
-    @Body() body: CreateDonationCheckoutRequestDto,
-  ): Promise<CreateDonationCheckoutResponseDto> {
-    return await this.createDonationCheckoutUseCase.execute({
-      ...body,
-      userId: payload.id,
-    });
+  ): Promise<GetUserDonationsResponseDto[]> {
+    return await this.getUserDonationsUseCase.execute({ userId: payload.id });
   }
 }

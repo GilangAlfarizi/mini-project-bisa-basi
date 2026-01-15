@@ -4,4 +4,5 @@ export enum PaymentStatus {
   PENDING = 'PENDING',
   FAIL = 'FAIL',
   CANCEL = 'CANCEL',
+  UNKNOWN = 'UNKNOWN',
 }

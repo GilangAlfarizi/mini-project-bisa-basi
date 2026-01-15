@@ -5,6 +5,7 @@ import { CampaignModule } from '@presentation/campaign/campaign.module';
 import { CategoryModule } from '@presentation/category/category.module';
 import { DonationModule } from '@presentation/donation/donation.module';
 import { UserModule } from '@presentation/user/user.module';
+import { WebhookModule } from '@presentation/webhook/webhook.module';
 
 import { CommonModule } from './common.module';
 
@@ -16,6 +17,7 @@ import { CommonModule } from './common.module';
     CategoryModule,
     CampaignModule,
     DonationModule,
+    WebhookModule,
     RouterModule.register([
       {
         path: '/auth',
@@ -36,6 +38,10 @@ import { CommonModule } from './common.module';
       {
         path: '/donation',
         module: DonationModule,
+      },
+      {
+        path: '/webhooks',
+        module: WebhookModule,
       },
     ]),
   ],

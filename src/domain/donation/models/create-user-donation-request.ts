@@ -1,6 +1,5 @@
-export class CreateDonationRequest {
+export class CreateUserDonationRequest {
   userId: string;
   campaignId: string;
-  paymentType: string;
   amount: number;
 }

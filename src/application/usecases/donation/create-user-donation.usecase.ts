@@ -2,8 +2,8 @@ import { IPaymentService } from '@application/services';
 import { Database, DB } from '@database';
 import { ICampaignRepository } from '@domain/campaign';
 import {
-  CreateDonationCheckoutRequest,
-  CreateDonationCheckoutResponse,
+  CreateUserDonationRequest,
+  CreateUserDonationResponse,
   IDonationRepository,
 } from '@domain/donation';
 import { PaymentStatus } from '@domain/enums';
@@ -11,7 +11,7 @@ import { IUserRepository } from '@domain/user';
 import { Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
-export class CreateDonationCheckoutUseCase {
+export class CreateUserDonationUseCase {
   constructor(
     @Inject(DB) private readonly db: Database,
     private readonly donationRepository: IDonationRepository,
@@ -20,17 +20,14 @@ export class CreateDonationCheckoutUseCase {
     private readonly paymentService: IPaymentService,
   ) {}
 
-  execute(
-    req: CreateDonationCheckoutRequest,
-  ): Promise<CreateDonationCheckoutResponse> {
+  execute(req: CreateUserDonationRequest): Promise<CreateUserDonationResponse> {
     return this.db.transaction(async (tx) => {
       const user = await this.userRepository.findOne({
         select: { id: true, email: true, name: true },
         where: { id: req.userId },
       });
 
-      if (!user)
-        throw new Error('CREATE_DONATION_CHECKOUT_USECASE.USER_NOT_FOUND');
+      if (!user) throw new Error('CREATE_USER_DONATION_USECASE.USER_NOT_FOUND');
 
       const campaign = await this.campaignRepository.findOne({
         select: { id: true, name: true, totalAmount: true },
@@ -38,7 +35,7 @@ export class CreateDonationCheckoutUseCase {
       });
 
       if (!campaign)
-        throw new Error('CREATE_DONATION_CHECKOUT_USECASE.CAMPAIGN_NOT_FOUND');
+        throw new Error('CREATE_USER_DONATION_USECASE.CAMPAIGN_NOT_FOUND');
 
       const orderId = this.paymentService.generateOrderId();
 

@@ -2,6 +2,7 @@ import * as Joi from 'joi';
 
 class Envs {
   port!: number;
+  nodeEnv?: 'production' | 'development' | 'test';
   databaseUrl!: string;
   jwtSecret!: string;
   jwtExpiresIn!: string;
@@ -16,10 +17,12 @@ class Envs {
   isProduction!: boolean;
   midtransClientKey!: string;
   midtransServerKey!: string;
+  corsOrigin!: string;
 }
 
 export const validationSchema = Joi.object({
   port: Joi.number().required(),
+  nodeEnv: Joi.string().optional(),
   databaseUrl: Joi.string().required(),
   jwtSecret: Joi.string().required(),
   jwtExpiresIn: Joi.string().required(),
@@ -34,11 +37,13 @@ export const validationSchema = Joi.object({
   isProduction: Joi.boolean().required(),
   midtransClientKey: Joi.string().required(),
   midtransServerKey: Joi.string().required(),
+  corsOrigin: Joi.array().items(Joi.string()).required(),
 });
 
 export const envsConfig = (): Envs => {
   const { error, value } = validationSchema.validate({
     port: Number(process.env.PORT ?? 3000),
+    nodeEnv: process.env.NODE_ENV,
     databaseUrl: process.env.DATABASE_URL!,
     jwtSecret: process.env.JWT_SECRET!,
     jwtExpiresIn: process.env.JWT_EXPIRES_IN!,
@@ -53,6 +58,7 @@ export const envsConfig = (): Envs => {
     isProduction: process.env.IS_PRODUCTION!,
     midtransClientKey: process.env.MIDTRANS_CLIENT_KEY!,
     midtransServerKey: process.env.MIDTRANS_SERVER_KEY!,
+    corsOrigin: process.env.CORS_ORIGIN!.split(',') ?? [],
   });
 
   if (error) throw new Error(error.message);

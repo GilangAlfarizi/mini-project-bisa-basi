@@ -1,4 +1,5 @@
 import { DB, schema } from '@database';
+import { winstonConfig } from '@infrastructure/configs/winston.config';
 import { envsConfig } from '@infrastructure/envs';
 import { HttpExceptionFilter } from '@infrastructure/filters';
 import { ResponseInterceptor } from '@infrastructure/interceptors';
@@ -16,16 +17,22 @@ import {
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
+import { ScheduleModule } from '@nestjs/schedule';
+import { ResourceMonitorModule } from '@presentation/resource-monitor/resource-monitor.module';
 import { v2 as cloudinary } from 'cloudinary';
 import { Snap } from 'midtrans-client';
+import { WinstonModule } from 'nest-winston';
 
 @Global()
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
+    ResourceMonitorModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [envsConfig],
     }),
+    WinstonModule.forRoot(winstonConfig()),
     DrizzlePGModule.registerAsync({
       tag: DB,
       useFactory: () => {

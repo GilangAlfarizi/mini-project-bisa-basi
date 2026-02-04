@@ -1,4 +1,5 @@
-import { Module } from '@nestjs/common';
+import { LoggerMiddleware } from '@infrastructure/middlewares';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { RouterModule } from '@nestjs/core';
 import { AuthModule } from '@presentation/auth/auth.module';
 import { CampaignModule } from '@presentation/campaign/campaign.module';
@@ -47,4 +48,8 @@ import { CommonModule } from './common.module';
   ],
   providers: [],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}

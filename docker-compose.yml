@@ -1,5 +1,22 @@
 services:
+  app:
+    build: #build docker image from Dockerfile
+      context: . #dockerfile path
+      dockerfile: Dockerfile
+    container_name: bisa-basi-app
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    depends_on: #wait for db-local before start app
+      db-local:
+        condition: service_healthy
+    restart: on-failure:3
+    networks:
+      - shared_networks
+
   db-local:
+    container_name: bisa-basi-db
     image: postgres:latest
     ports:
       - 5434:5432
@@ -8,11 +25,20 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=bisa_basi
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+    networks:
+      - shared_networks
 
 volumes:
   pgdata:
 
 networks:
-  shared_network:
-    external: true
+  shared_networks:
+    external: true #expose to localhost
+    driver: bridge #allow each services to interact

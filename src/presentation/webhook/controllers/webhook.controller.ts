@@ -1,4 +1,7 @@
-import { WebhookMidtransUseCase } from '@application/usecases/webhook';
+import {
+  WebhookMidtransUseCase,
+  WebhookTypeformUseCase,
+} from '@application/usecases/webhook';
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
@@ -7,6 +10,7 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 export class WebhookController {
   constructor(
     private readonly webhookMidtransUseCase: WebhookMidtransUseCase,
+    private readonly webhookTypeformUseCase: WebhookTypeformUseCase,
   ) {}
 
   @ApiOkResponse({
@@ -16,5 +20,10 @@ export class WebhookController {
   @Post('/midtrans')
   async handleMidtransNotification(@Body() body: any): Promise<void> {
     return await this.webhookMidtransUseCase.execute(body);
+  }
+
+  @Post('/typeform')
+  async submitFormResponse(@Body() body: any): Promise<void> {
+    return await this.webhookTypeformUseCase.execute(body);
   }
 }

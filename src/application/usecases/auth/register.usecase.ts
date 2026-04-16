@@ -30,7 +30,7 @@ export class RegisterUseCase {
     private readonly mailTemplateService: IMailTemplateService,
   ) {}
 
-  execute(req: RegisterRequest): Promise<RegisterResponse> {
+  execute(req: RegisterRequest): Promikse<RegisterResponse> {
     return this.db.transaction(async (tx) => {
       const isUserExist = await this.userRepository.findOne(
         {
